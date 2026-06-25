@@ -15,6 +15,17 @@ const BADGE: Record<Estado, string> = {
   expirada:  'bg-yellow-100 text-yellow-700',
 };
 
+async function descargarPDF(id: number) {
+  const res = await fetch(`${API}/admin/cotizaciones/${id}/pdf`);
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cotizacion-${id}.pdf`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function AdminCotizacionesPage() {
   const [cotizaciones, setCotizaciones] = useState<any[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -91,7 +102,15 @@ export default function AdminCotizacionesPage() {
                     <td className="px-4 py-3 text-gray-500 text-xs">
                       {new Date(c.created_at).toLocaleDateString('es-CR')}
                     </td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">{expandido === c.id ? '▲' : '▼'}</td>
+                    <td className="px-4 py-3 text-gray-400 text-xs flex items-center gap-3 justify-end">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); descargarPDF(c.id); }}
+                        className="text-blue-600 hover:underline text-xs font-medium"
+                      >
+                        PDF
+                      </button>
+                      {expandido === c.id ? '▲' : '▼'}
+                    </td>
                   </tr>
 
                   {expandido === c.id && (
