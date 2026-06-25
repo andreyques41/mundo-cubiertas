@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Patch, Res, UsePipes, ValidationPipe } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { AdminCotizacionesService } from './admin-cotizaciones.service';
 import { CambiarEstadoDto } from './dto/cambiar-estado.dto';
 
