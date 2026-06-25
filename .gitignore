@@ -1,0 +1,25 @@
+# Variables de entorno (NUNCA commitear)
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+dist/
+.next/
+build/
+
+# Prisma
+prisma/migrations/dev.db
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

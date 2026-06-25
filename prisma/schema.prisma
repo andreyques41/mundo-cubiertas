@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EstadoCotizacion {
+  borrador
+  enviada
+  aceptada
+  rechazada
+  expirada
+}
+
+model Producto {
+  id               Int               @id @default(autoincrement())
+  nombre           String
+  categoria        String
+  descripcion      String?
+  precio_referencia Decimal          @db.Decimal(10, 2)
+  unidad           String            @default("m2")
+  imagen_url       String?
+  activo           Boolean           @default(true)
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @updatedAt
+
+  cotizacion_items CotizacionItem[]
+
+  @@map("productos")
+}
+
+model Cliente {
+  id             Int           @id @default(autoincrement())
+  nombre         String
+  empresa        String?
+  email          String?
+  telefono       String
+  tiene_planos   Boolean       @default(false)
+  notas          String?
+  fecha_registro DateTime      @default(now())
+
+  cotizaciones   Cotizacion[]
+
+  @@map("clientes")
+}
+
+model Cotizacion {
+  id           Int              @id @default(autoincrement())
+  cliente_id   Int
+  estado       EstadoCotizacion @default(borrador)
+  tiene_planos Boolean          @default(false)
+  url_planos   String?
+  total        Decimal?         @db.Decimal(10, 2)
+  notas        String?
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
+
+  cliente      Cliente          @relation(fields: [cliente_id], references: [id])
+  items        CotizacionItem[]
+
+  @@map("cotizaciones")
+}
+
+model CotizacionItem {
+  id              Int        @id @default(autoincrement())
+  cotizacion_id   Int
+  producto_id     Int
+  cantidad        Decimal    @db.Decimal(10, 2)
+  unidad          String
+  precio_unitario Decimal    @db.Decimal(10, 2)
+  subtotal        Decimal    @db.Decimal(10, 2)
+
+  cotizacion      Cotizacion @relation(fields: [cotizacion_id], references: [id])
+  producto        Producto   @relation(fields: [producto_id], references: [id])
+
+  @@map("cotizacion_items")
+}
