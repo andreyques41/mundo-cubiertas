@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
 const nav = [
   { href: '/admin', label: 'Dashboard' },
@@ -12,6 +13,8 @@ const nav = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const path = usePathname();
 
+  if (path === '/admin/login') return <>{children}</>;
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <header className="bg-gray-900 text-white px-6 py-4 flex items-center justify-between">
@@ -21,9 +24,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             Panel Admin
           </span>
         </div>
-        <Link href="/" className="text-sm text-gray-400 hover:text-white transition">
-          Ver sitio público →
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="text-sm text-gray-400 hover:text-white transition">
+            Ver sitio público →
+          </Link>
+          <button
+            onClick={() => signOut({ callbackUrl: '/admin/login' })}
+            className="text-sm text-gray-400 hover:text-red-400 transition"
+          >
+            Cerrar sesión
+          </button>
+        </div>
       </header>
 
       <div className="flex flex-1">
